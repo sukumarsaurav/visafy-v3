@@ -1,4 +1,6 @@
 <?php
+// File: dashboard/team_member/includes/header.php
+
 // Start session only if one isn't already active
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -7,18 +9,18 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once '../../config/db_connect.php';
 require_once '../../includes/functions.php';
 
-// Check if user is logged in and is a professional
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] != 'professional') {
+// Check if user is logged in and is a team member
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] != 'team_member') {
     header("Location: ../../login.php");
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch user data with the new database structure
-$stmt = $conn->prepare("SELECT u.*, pe.* FROM users u 
-                        LEFT JOIN professional_entities pe ON u.id = pe.user_id 
-                        WHERE u.id = ? AND u.role = 'professional'");
+// Fetch user data
+$stmt = $conn->prepare("SELECT u.*, tm.* FROM users u 
+                        LEFT JOIN team_members tm ON u.id = tm.user_id 
+                        WHERE u.id = ? AND u.role = 'team_member'");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -31,34 +33,26 @@ if ($result->num_rows == 0) {
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// Get additional details based on entity type
-if ($user['entity_type'] == 'individual') {
-    $stmt = $conn->prepare("SELECT * FROM individual_professionals WHERE entity_id = ?");
-    $stmt->bind_param("i", $user['id']);
-    $stmt->execute();
-    $entity_result = $stmt->get_result();
-    if ($entity_result->num_rows > 0) {
-        $entity_details = $entity_result->fetch_assoc();
-        // Merge entity details with user data
-        $user = array_merge($user, $entity_details);
-        // Set name from first and last name
-        $user['name'] = $entity_details['first_name'] . ' ' . $entity_details['last_name'];
-    }
-    $stmt->close();
-} else if ($user['entity_type'] == 'company') {
-    $stmt = $conn->prepare("SELECT * FROM company_professionals WHERE entity_id = ?");
-    $stmt->bind_param("i", $user['id']);
-    $stmt->execute();
-    $entity_result = $stmt->get_result();
-    if ($entity_result->num_rows > 0) {
-        $entity_details = $entity_result->fetch_assoc();
-        // Merge entity details with user data
-        $user = array_merge($user, $entity_details);
-        // Set name from company name
-        $user['name'] = $entity_details['company_name'];
-    }
-    $stmt->close();
-}
+// Get company information
+$stmt = $conn->prepare("
+    SELECT cp.*, pe.verification_status, pe.entity_type
+    FROM company_professionals cp
+    JOIN professional_entities pe ON cp.entity_id = pe.id
+    WHERE cp.id = ?
+");
+$stmt->bind_param("i", $user['company_id']);
+$stmt->execute();
+$company_result = $stmt->get_result();
+$company = $company_result->fetch_assoc();
+$stmt->close();
+
+// Get role information
+$stmt = $conn->prepare("SELECT * FROM team_roles WHERE id = ?");
+$stmt->bind_param("i", $user['role_id']);
+$stmt->execute();
+$role_result = $stmt->get_result();
+$role = $role_result->fetch_assoc();
+$stmt->close();
 
 // Check for unread notifications
 $stmt = $conn->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0");
@@ -81,11 +75,6 @@ while ($notification = $notifications->fetch_assoc()) {
 }
 $stmt->close();
 
-// Debug: If there are no notifications but we have a count, something's wrong
-if (empty($notifications_list) && $notification_count > 0) {
-    error_log("Warning: Notifications count is $notification_count but no notifications were fetched.");
-}
-
 // Determine if sidebar should be collapsed based on user preference or default
 $sidebar_collapsed = isset($_COOKIE['sidebar_collapsed']) && $_COOKIE['sidebar_collapsed'] === 'true';
 $sidebar_class = $sidebar_collapsed ? 'collapsed' : '';
@@ -93,20 +82,17 @@ $main_content_class = $sidebar_collapsed ? 'expanded' : '';
 
 // Prepare profile image
 $profile_img = '../assets/img/default-profile.jpg';
-// Check for profile image from professional_entities table
-$profile_image = !empty($user['profile_image']) ? $user['profile_image'] : 
-                (!empty($user['profile_picture']) ? $user['profile_picture'] : '');
-
-if (!empty($profile_image)) {
+if (!empty($user['profile_image'])) {
     // Check both possible locations
-    if (file_exists('../../uploads/profiles/' . $profile_image)) {
-        $profile_img = '../../uploads/profiles/' . $profile_image;
-    } else if (file_exists('../uploads/profiles/' . $profile_image)) {
-        $profile_img = '../uploads/profiles/' . $profile_image;
-    } else if (file_exists('../uploads/profile/' . $profile_image)) {
-        $profile_img = '../uploads/profile/' . $profile_image;
+    if (file_exists('../../uploads/profiles/' . $user['profile_image'])) {
+        $profile_img = '../../uploads/profiles/' . $user['profile_image'];
+    } else if (file_exists('../uploads/profiles/' . $user['profile_image'])) {
+        $profile_img = '../uploads/profiles/' . $user['profile_image'];
     }
 }
+
+// Display name (first and last name)
+$display_name = $user['first_name'] . ' ' . $user['last_name'];
 
 // Get the current page name
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
@@ -116,11 +102,10 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title : 'Professional Dashboard'; ?> - Visafy</title>
+    <title><?php echo isset($page_title) ? $page_title : 'Team Member Dashboard'; ?> - Visafy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../dashboard/assets/css/style.css">
-    <link rel="stylesheet" href="../../dashboard/assets/css/chatbot.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -183,7 +168,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                 </div>
                 <div class="user-dropdown">
-                    <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
+                    <span class="user-name"><?php echo htmlspecialchars($display_name); ?></span>
                     <img src="<?php echo $profile_img; ?>" alt="Profile" class="profile-img-header" style="width: 32px; height: 32px;">
                     <div class="user-dropdown-menu">
                         <a href="profile.php" class="dropdown-item">
@@ -202,14 +187,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         </header>
 
         <!-- Sidebar -->
-        <aside class="sidebar <?php echo $sidebar_class; ?>">
+        <aside  class="sidebar <?php echo $sidebar_class; ?>">
             <div class="profile-section">
                 <img src="<?php echo $profile_img; ?>" alt="Profile" class="profile-img">
                 <div class="profile-info">
-                    <h3 class="profile-name"><?php echo htmlspecialchars($user['name']); ?></h3>
-                    <span class="verification-status <?php echo $user['verification_status'] == 'verified' ? 'verified' : 'unverified'; ?>">
-                        <?php echo $user['verification_status'] == 'verified' ? 'Verified' : 'Unverified'; ?>
-                    </span>
+                    <h3 class="profile-name"><?php echo htmlspecialchars($display_name); ?></h3>
+                    <span class="team-role"><?php echo htmlspecialchars($role['name']); ?></span>
+                    <span class="company-name"><?php echo htmlspecialchars($company['company_name']); ?></span>
                 </div>
             </div>
             <nav class="sidebar-nav">
@@ -218,73 +202,37 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <span class="nav-item-text">Dashboard</span>
                 </a>
                 
-                <!-- Visafy AI Section -->
                 <div class="sidebar-divider"></div>
-                <a href="ai-chat.php" class="nav-item <?php echo $current_page == 'ai-chat' ? 'active' : ''; ?>">
-                    <i class="fas fa-robot"></i>
-                    <span class="nav-item-text">Visafy Ai</span>
-                </a>
-                <a href="ai-documents.php" class="nav-item <?php echo $current_page == 'ai-documents' ? 'active' : ''; ?>">
-                    <i class="fas fa-file-alt"></i>
-                    <span class="nav-item-text">Draft Documents</span>
-                </a>
                 
-                <div class="sidebar-divider"></div>
-                <!-- End Visafy AI Section -->
-
                 <a href="profile.php" class="nav-item <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user"></i>
                     <span class="nav-item-text">Profile</span>
                 </a>
-                <a href="services.php" class="nav-item <?php echo $current_page == 'services' ? 'active' : ''; ?>">
-                    <i class="fas fa-briefcase"></i>
-                    <span class="nav-item-text">Services</span>
+                
+                <a href="tasks.php" class="nav-item <?php echo $current_page == 'tasks' ? 'active' : ''; ?>">
+                    <i class="fas fa-tasks"></i>
+                    <span class="nav-item-text">My Tasks</span>
                 </a>
-                <a href="availability.php" class="nav-item <?php echo $current_page == 'availability' ? 'active' : ''; ?>">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="nav-item-text">Availability</span>
-                </a>
-                <a href="appointments.php" class="nav-item <?php echo $current_page == 'appointments' ? 'active' : ''; ?>">
-                    <i class="fas fa-clock"></i>
-                    <span class="nav-item-text">Appointments</span>
-                </a>
-                <div class="sidebar-divider"></div>
-                <a href="clients.php" class="nav-item <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i>
-                    <span class="nav-item-text">Clients</span>
-                </a>
+                
                 <a href="cases.php" class="nav-item <?php echo $current_page == 'cases' ? 'active' : ''; ?>">
                     <i class="fas fa-folder-open"></i>
                     <span class="nav-item-text">Cases</span>
                 </a>
+                
                 <a href="documents.php" class="nav-item <?php echo $current_page == 'documents' ? 'active' : ''; ?>">
                     <i class="fas fa-file-alt"></i>
                     <span class="nav-item-text">Documents</span>
                 </a>
                 
                 <div class="sidebar-divider"></div>
-                <div class="sidebar-section-title">Team Management</div>
-                <a href="members.php" class="nav-item <?php echo $current_page == 'members' ? 'active' : ''; ?>">
-                    <i class="fas fa-user-friends"></i>
-                    <span class="nav-item-text">Team Members</span>
-                </a>
-                <a href="tasks.php" class="nav-item <?php echo $current_page == 'tasks' ? 'active' : ''; ?>">
-                    <i class="fas fa-tasks"></i>
-                    <span class="nav-item-text">Tasks</span>
-                </a>
                 
-                <div class="sidebar-divider"></div>
                 <a href="messages.php" class="nav-item <?php echo $current_page == 'messages' ? 'active' : ''; ?>">
                     <i class="fas fa-envelope"></i>
                     <span class="nav-item-text">Messages</span>
                 </a>
-                <a href="reviews.php" class="nav-item <?php echo $current_page == 'reviews' ? 'active' : ''; ?>">
-                    <i class="fas fa-star"></i>
-                    <span class="nav-item-text">Reviews</span>
-                </a>
                 
                 <div class="sidebar-divider"></div>
-             
+                
                 <a href="../logout.php" class="nav-item">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="nav-item-text">Logout</span>
@@ -294,7 +242,3 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
         <!-- Main Content Container -->
         <main class="main-content <?php echo $main_content_class; ?>">
-           
-            
-
-   
