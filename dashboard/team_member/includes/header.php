@@ -83,11 +83,15 @@ $main_content_class = $sidebar_collapsed ? 'expanded' : '';
 // Prepare profile image
 $profile_img = '../assets/img/default-profile.jpg';
 if (!empty($user['profile_image'])) {
-    // Check both possible locations
+    // Check for image in the correct directories
     if (file_exists('../../uploads/profiles/' . $user['profile_image'])) {
         $profile_img = '../../uploads/profiles/' . $user['profile_image'];
     } else if (file_exists('../uploads/profiles/' . $user['profile_image'])) {
         $profile_img = '../uploads/profiles/' . $user['profile_image'];
+    } else if (file_exists('../../uploads/profile_images/' . $user['profile_image'])) {
+        $profile_img = '../../uploads/profile_images/' . $user['profile_image'];
+    } else if (file_exists('../uploads/profile_images/' . $user['profile_image'])) {
+        $profile_img = '../uploads/profile_images/' . $user['profile_image'];
     }
 }
 
@@ -106,6 +110,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../dashboard/assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
 </head>
 <body>
     <div class="dashboard-container">
