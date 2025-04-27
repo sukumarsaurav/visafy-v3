@@ -185,6 +185,18 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <div class="user-dropdown">
                     <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
                     <img src="<?php echo $profile_img; ?>" alt="Profile" class="profile-img-header" style="width: 32px; height: 32px;">
+                    <div class="user-dropdown-menu">
+                        <a href="profile.php" class="dropdown-item">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="settings.php" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="../logout.php" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
                 </div>
             </div>
         </header>

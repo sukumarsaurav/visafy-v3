@@ -35,4 +35,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+            // User dropdown toggle
+            document.querySelector('.user-dropdown').addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.querySelector('.user-dropdown-menu').classList.toggle('show');
+            });
+            
+            // Close user dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const dropdown = document.querySelector('.user-dropdown-menu');
+                if (dropdown && dropdown.classList.contains('show') && !dropdown.contains(e.target) && !e.target.closest('.user-dropdown')) {
+                    dropdown.classList.remove('show');
+                }
+            });
 }); 
