@@ -57,7 +57,7 @@ if (!$success) {
 }
 
 // Send email with invitation link
-$invitation_link = "https://visafy.com/invite/accept.php?token=" . $token;
+$invitation_link = "https://neowebx.com/invite/accept.php?token=" . $token;
 $subject = "Visafy Team Invitation (Reminder)";
 $message = "
 <html>
