@@ -1,0 +1,206 @@
+/* Assessment Tool Button */
+.assessment-tool-button {
+    position: fixed;
+    top: 40%;
+    right: 0px;
+    background-color: var(--color-red);
+    color: var(--color-light);
+    border-radius: 5px 5px 0 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.3s ease;
+    transform: rotate(-90deg);
+    transform-origin: bottom right;
+}
+
+.assessment-tool-button:hover {
+    background-color: var(--color-burgundy);
+    right: 4px;
+}
+
+.tool-text {
+    font-weight: 500;
+    font-family: var(--font-primary);
+}
+
+/* Assessment Drawer */
+.assessment-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.assessment-drawer-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.assessment-drawer {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 400px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+}
+
+.assessment-drawer.open {
+    right: 0;
+}
+
+.drawer-header {
+    padding: 20px;
+    background-color: #042167;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawer-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-drawer {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.close-drawer:hover {
+    color: #eaaa34;
+}
+
+.drawer-content {
+    padding: 20px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+.assessment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #042167;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid rgba(4, 33, 103, 0.1);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #eaaa34;
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #eaaa34;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #042167;
+}
+
+.assessment-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: #eaaa34;
+    color: #fff;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.assessment-toggle:hover {
+    background-color: #042167;
+    transform: translateY(-3px);
+}
+
+.assessment-toggle i {
+    margin-right: 8px;
+}
+
+@media (max-width: 480px) {
+    .assessment-drawer {
+        width: 100%;
+        right: -100%;
+    }
+
+    .assessment-toggle {
+        width: calc(100% - 40px);
+        text-align: center;
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .assessment-drawer {
+        width: 300px;
+    }
+    
+    .assessment-tool-button {
+        padding: 10px 15px;
+    }
+    
+    .tool-text {
+        font-size: 14px;
+    }
+    
+    .assessment-tool-button i {
+        font-size: 16px;
+    }
+} 

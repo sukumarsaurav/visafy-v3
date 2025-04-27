@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+  <style>
+    .logo-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 20px; }
+    .paper-plane { fill: #1a56db; }
+  </style>
+  <g transform="translate(10, 30)">
+    <path class="paper-plane" d="M40,0L0,20l15,5l25-15l-18,18l3,12l5-5l5,5l5-40z" />
+    <text x="20" y="50" class="logo-text">Visafy</text>
+  </g>
+</svg> 
