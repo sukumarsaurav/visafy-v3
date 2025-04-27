@@ -143,10 +143,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $stmt->get_result();
                 $messages = [];
                 while ($row = $result->fetch_assoc()) {
+                    $content = $row['content'];
+                    // If it's an AI message, format the content for display
+                    if ($row['role'] === 'assistant') {
+                        $content = nl2br($content);
+                    }
+                    
                     $messages[] = [
                         'id' => $row['id'],
                         'role' => $row['role'],
-                        'content' => $row['content'],
+                        'content' => $content,
                         'created_at' => $row['created_at']
                     ];
                 }
@@ -291,11 +297,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         $ai_response = $result['choices'][0]['message']['content'];
                         
-                        // Save AI response
+                        // Format the response for display - preserve line breaks
+                        $ai_response = nl2br($ai_response);
+                        
+                        // Save the original response to the database (without HTML)
                         $sql = "INSERT INTO ai_chat_messages (conversation_id, entity_id, role, content) 
                                 VALUES (?, ?, 'assistant', ?)";
                         $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("iis", $conversation_id, $entity_id, $ai_response);
+                        $raw_response = $result['choices'][0]['message']['content']; // Original without formatting
+                        $stmt->bind_param("iis", $conversation_id, $entity_id, $raw_response);
                         if (!$stmt->execute()) {
                             throw new Exception('Failed to save AI response: ' . $conn->error);
                         }

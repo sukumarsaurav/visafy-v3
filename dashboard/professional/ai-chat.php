@@ -175,7 +175,14 @@ function updateUsageCounter() {
 function appendMessage(content, isUser = false, isError = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'} ${isError ? 'error-message' : ''}`;
-    messageDiv.textContent = content;
+    
+    // For AI messages, preserve formatting
+    if (!isUser && !isError) {
+        messageDiv.innerHTML = content;
+    } else {
+        messageDiv.textContent = content;
+    }
+    
     const chatMessages = document.getElementById('chat-messages');
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;

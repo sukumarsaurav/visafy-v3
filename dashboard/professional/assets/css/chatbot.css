@@ -371,3 +371,20 @@
 .conversations-list::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+.ai-message {
+    /* Existing styles */
+    white-space: pre-line; /* Preserves line breaks */
+}
+
+.ai-message ul, .ai-message ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.ai-message p {
+    margin: 5px 0;
+}
+
+.ai-message br {
+    margin-bottom: 2px;
+}
