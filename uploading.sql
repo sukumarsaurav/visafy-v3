@@ -115,6 +115,16 @@ CREATE TABLE `team_roles` (
   CONSTRAINT `team_roles_company_id_fk` FOREIGN KEY (`company_id`) REFERENCES `company_professionals` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `member_roles` (name, description, is_system) VALUES
+('Case Manager', 'Manages visa applications from start to finish, coordinates with applicants and other team members', 1),
+('Document Creator', 'Prepares and reviews all required legal documents for applications', 1),
+('Career Consultant', 'Advises applicants on career opportunities and prepares related documentation', 1),
+('Business Plan Creator', 'Develops comprehensive business plans for business/investor visa applications', 1),
+('Immigration Assistant', 'Handles administrative tasks related to immigration applications', 1),
+('Social Media Manager', 'Manages social media presence and marketing campaigns', 1),
+('Leads & CRM Manager', 'Handles lead generation, follow-ups and maintains the CRM system', 1),
+('Custom Role', 'Customizable role with specific permissions', 1);
+
 CREATE TABLE `team_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -381,3 +391,18 @@ CREATE TABLE `visa_required_documents` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Applications submitted by users
+
+-- Create activity log table for audit trail
+CREATE TABLE `activity_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `action_type` varchar(50) NOT NULL,
+  `action_details` json DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_activity_log_user` (`user_id`),
+  KEY `idx_activity_log_action_type` (`action_type`),
+  KEY `idx_activity_log_created_at` (`created_at`),
+  CONSTRAINT `activity_log_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
