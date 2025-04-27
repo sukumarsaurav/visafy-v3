@@ -254,6 +254,7 @@ body {
 .sidebar.collapsed {
     width: var(--sidebar-collapsed-width);
 }
+.sidebar.collapsed .sidebar-section-title,
 .sidebar.collapsed .nav-item-text,
 .sidebar.collapsed .profile-info,
 .sidebar.collapsed .sidebar-divider,
