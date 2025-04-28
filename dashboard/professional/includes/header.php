@@ -124,6 +124,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="assets/css/profile.css">
     <link rel="stylesheet" href="assets/css/services.css">
     <link rel="stylesheet" href="assets/css/bookings.css">
+    <link rel="stylesheet" href="assets/css/clients.css">
 </head>
 <body>
     <div class="dashboard-container">

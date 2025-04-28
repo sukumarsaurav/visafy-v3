@@ -1,4 +1,4 @@
-CREATE TABLE `members` (
+CREATE TABLE `team_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `professional_id` int(11) NOT NULL COMMENT 'The professional who created this member',
@@ -11,9 +11,9 @@ CREATE TABLE `members` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   KEY `professional_id` (`professional_id`),
-  KEY `idx_members_is_active` (`is_active`),
-  CONSTRAINT `members_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `members_professional_id_fk` FOREIGN KEY (`professional_id`) REFERENCES `professionals` (`id`) ON DELETE CASCADE
+  KEY `idx_team_members_is_active` (`is_active`),
+  CONSTRAINT `team_members_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `team_members_professional_id_fk` FOREIGN KEY (`professional_id`) REFERENCES `professionals` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `team_roles` (
@@ -28,12 +28,12 @@ CREATE TABLE `team_roles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_role_name_per_professional` (`name`, `professional_id`),
   KEY `professional_id` (`professional_id`),
-  KEY `idx_member_roles_is_active` (`is_active`),
-  CONSTRAINT `member_roles_professional_id_fk` FOREIGN KEY (`professional_id`) REFERENCES `professionals` (`id`) ON DELETE CASCADE
+  KEY `idx_team_roles_is_active` (`is_active`),
+  CONSTRAINT `team_roles_professional_id_fk` FOREIGN KEY (`professional_id`) REFERENCES `professionals` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Insert system-defined member roles
-INSERT INTO `member_roles` (name, description, is_system) VALUES
+INSERT INTO `team_roles` (name, description, is_system) VALUES
 ('Case Manager', 'Manages visa applications from start to finish, coordinates with applicants and other team members', 1),
 ('Document Creator', 'Prepares and reviews all required legal documents for applications', 1),
 ('Career Consultant', 'Advises applicants on career opportunities and prepares related documentation', 1),
