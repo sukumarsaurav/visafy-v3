@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_company && $company_id) {
                 $stmt->execute();
                 
                 // Send email with invitation link
-                $invitation_link = "https://visafy.com/invite/accept.php?token=" . $token;
+                $invitation_link = "https://neowebx.store/invite/accept.php?token=" . $token;
                 $subject = "Visafy Team Invitation";
                 $message = "
                 <html>
