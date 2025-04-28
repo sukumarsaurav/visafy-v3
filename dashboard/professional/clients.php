@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                             
                             $headers = "MIME-Version: 1.0" . "\r\n";
                             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                            $headers .= "From: Visafy <noreply@visafy.com>" . "\r\n";
+                            $headers .= "From: Visafy <noreply@visafy.io>" . "\r\n";
                             
                             mail($email, $subject, $message, $headers);
                             
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                     $stmt->execute();
                     
                     // Send invitation email with verification link
-                    $invitation_link = "https://visafy.com/verify-email.php?token=" . $token;
+                    $invitation_link = "https://neowebx.store/verify-email.php?token=" . $token;
                     $subject = "Visafy Client Invitation";
                     $message = "
                     <html>
