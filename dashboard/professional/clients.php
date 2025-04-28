@@ -73,6 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                             $stmt->bind_param("iiisss", $entity_id, $applicant_id, $team_member_id, $source, $source_details, $notes);
                             $stmt->execute();
                             
+                            // Check if applicant profile exists, if not create it
+                            $stmt = $conn->prepare("SELECT id FROM applicant_profiles WHERE user_id = ?");
+                            $stmt->bind_param("i", $applicant_id);
+                            $stmt->execute();
+                            $profile_result = $stmt->get_result();
+                            
+                            if ($profile_result->num_rows == 0) {
+                                // Create applicant profile
+                                $stmt = $conn->prepare("INSERT INTO applicant_profiles (user_id, first_name, last_name) VALUES (?, ?, ?)");
+                                $stmt->bind_param("iss", $applicant_id, $first_name, $last_name);
+                                $stmt->execute();
+                            } else {
+                                // Update existing profile if needed
+                                $stmt = $conn->prepare("UPDATE applicant_profiles SET first_name = ?, last_name = ? WHERE user_id = ?");
+                                $stmt->bind_param("ssi", $first_name, $last_name, $applicant_id);
+                                $stmt->execute();
+                            }
+                            
                             // Send invitation email
                             $subject = "Visafy Professional Invitation";
                             $message = "
@@ -122,6 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                     $stmt->bind_param("sssssss", $email, $hashed_password, $role, $status, $email_verified, $token, $expires);
                     $stmt->execute();
                     $applicant_id = $conn->insert_id;
+                    
+                    // Create applicant profile
+                    $stmt = $conn->prepare("INSERT INTO applicant_profiles (user_id, first_name, last_name) VALUES (?, ?, ?)");
+                    $stmt->bind_param("iss", $applicant_id, $first_name, $last_name);
+                    $stmt->execute();
                     
                     // Add as client
                     $stmt = $conn->prepare("INSERT INTO professional_clients 

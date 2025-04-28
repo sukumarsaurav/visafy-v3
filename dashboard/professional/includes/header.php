@@ -125,6 +125,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="assets/css/services.css">
     <link rel="stylesheet" href="assets/css/bookings.css">
     <link rel="stylesheet" href="assets/css/clients.css">
+    <link rel="stylesheet" href="assets/css/applications.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -254,9 +255,9 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <i class="fas fa-users"></i>
                     <span class="nav-item-text">Clients</span>
                 </a>
-                <a href="cases.php" class="nav-item <?php echo $current_page == 'cases' ? 'active' : ''; ?>">
+                <a href="applications.php" class="nav-item <?php echo $current_page == 'applications' ? 'active' : ''; ?>">
                     <i class="fas fa-folder-open"></i>
-                    <span class="nav-item-text">Cases</span>
+                    <span class="nav-item-text">Applications</span>
                 </a>
                 <a href="documents.php" class="nav-item <?php echo $current_page == 'documents' ? 'active' : ''; ?>">
                     <i class="fas fa-file-alt"></i>
