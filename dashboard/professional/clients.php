@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                     $stmt->execute();
                     
                     // Send invitation email with verification link
-                    $invitation_link = "https://neowebx.store/verify-email.php?token=" . $token;
+                    $invitation_link = "https://neowebx.store/verify_email.php?token=" . $token;
                     $subject = "Visafy Client Invitation";
                     $message = "
                     <html>
