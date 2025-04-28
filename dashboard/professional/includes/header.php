@@ -123,6 +123,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="assets/css/chatbot.css">
     <link rel="stylesheet" href="assets/css/profile.css">
     <link rel="stylesheet" href="assets/css/services.css">
+    <link rel="stylesheet" href="assets/css/bookings.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -242,14 +243,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <i class="fas fa-briefcase"></i>
                     <span class="nav-item-text">Services</span>
                 </a>
-                <a href="availability.php" class="nav-item <?php echo $current_page == 'availability' ? 'active' : ''; ?>">
+                <a href="bookings.php" class="nav-item <?php echo $current_page == 'bookings' ? 'active' : ''; ?>">
                     <i class="fas fa-calendar-alt"></i>
-                    <span class="nav-item-text">Availability</span>
+                    <span class="nav-item-text">Bookings-Schedule</span>
                 </a>
-                <a href="appointments.php" class="nav-item <?php echo $current_page == 'appointments' ? 'active' : ''; ?>">
-                    <i class="fas fa-clock"></i>
-                    <span class="nav-item-text">Appointments</span>
-                </a>
+              
                 <div class="sidebar-divider"></div>
                 <a href="clients.php" class="nav-item <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i>
